@@ -1,0 +1,26 @@
+# Pornire:  docker compose up -d
+# Oprire:   docker compose down        (datele rămân în volumul cinema-data)
+# Ștergere: docker compose down -v     (baza de date se golește)
+#
+# Portul 52817, ca în config.properties: un port neobișnuit, ca să nu intre în conflict cu alte servere.
+# Tabela NU se creează automat: la încălzire rulăm sql/cinema.sql în pgAdmin (Query Tool).
+services:
+  postgres:
+    image: postgres:17
+    container_name: s07-cinema
+    environment:
+      POSTGRES_DB: cinema
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "52817:5432"
+    volumes:
+      - cinema-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cinema"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+volumes:
+  cinema-data:
