@@ -1,11 +1,11 @@
 package course.lib;
 
-import java.util.List;
+import java.util.Collection;
 
 // TODO(student): items ar trebui sa fie Collection<T>, nu List<T>: o pagina nu are nevoie de acces dupa index.
 //  Acum este List doar pentru ca MovieStream citeste cu items().get(cursor). Schimbati MovieStream
 //  sa foloseasca un Iterator, apoi treceti Page la Collection<T>.
-public record Page<T>(List<T> items, int totalSize, PageRequest pageRequest) {
+public record Page<T>(Collection<T> items, int totalSize, PageRequest pageRequest) {
     public int number() {
         return pageRequest.page();
     }

@@ -90,7 +90,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
     @Override
     public Stream<Movie> streamOk() {
         final var movieStream = new MovieStream(this::findOnPage);
-        return Stream.generate(movieStream::getNextMovie);
+        return StreamSupport.stream(movieStream, false);
     }
 
     @Override
