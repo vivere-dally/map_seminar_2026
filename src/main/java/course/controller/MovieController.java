@@ -8,7 +8,6 @@ import course.lib.Sort;
 import course.lib.SortDirection;
 import course.service.MovieService;
 import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -23,7 +22,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 
 public class MovieController {
@@ -46,7 +44,7 @@ public class MovieController {
     private MovieService service;
 
     private PageRequest pageRequest = new PageRequest(1, PAGE_SIZE);
-    private Page page = new Page(List.of(), 1, pageRequest);
+    private Page<Movie> page = new Page<>(List.of(), 1, pageRequest);
 
     @FXML
     private void initialize() {

@@ -7,7 +7,6 @@ import course.lib.Page;
 import course.lib.PageRequest;
 import course.lib.Sort;
 import course.repository.PagingRepository;
-import course.repository.Repository;
 import course.repository.RepositoryException;
 
 import java.sql.Connection;
@@ -137,7 +136,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
     // orderBy se lipeste in textul SQL: apelantii il construiesc doar din constante, niciodata din input
     private Page<Movie> findOnPage(PageRequest pr, String orderBy) {
         List<Movie> movies = new ArrayList<>();
-        int count = 0;
+        int count;
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             count = count(connection);
             if (count == 0) {
@@ -357,7 +356,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
     /**
      * report (a): GROUP BY forms one group for each director, COUNT(*) counts the rows of the group
      *
-     * @return the number of movies of each director, ordered by director
+     * @return a map from each director to the number of movies of that director, ordered by director
      * @throws RepositoryException if a database access error occurs
      */
     public Map<String, Long> countByDirector() {

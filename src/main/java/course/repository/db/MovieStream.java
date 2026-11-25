@@ -11,7 +11,7 @@ import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MovieStream extends Spliterators.AbstractSpliterator {
+public class MovieStream extends Spliterators.AbstractSpliterator<Movie> {
     private final Function<PageRequest, Page<Movie>> pageFetcher;
 
     private PageRequest pr = new PageRequest(1, 3);
@@ -24,7 +24,7 @@ public class MovieStream extends Spliterators.AbstractSpliterator {
     }
 
     @Override
-    public boolean tryAdvance(Consumer action) {
+    public boolean tryAdvance(Consumer<? super Movie> action) {
         if (!currentPage.hasMore() && !it.hasNext()) {
             return false;
         }
