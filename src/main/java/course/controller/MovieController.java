@@ -74,11 +74,17 @@ public class MovieController {
     @FXML
     private void onPrevious() {
         // TODO 1: treceti la pagina anterioara (actualizati pageNumber, apoi reincarcati tabelul cu loadPage())
-    }
+        if(pageNumber != 1) {
+            pageNumber -= 1;
+            loadPage();
+        }
+        }
 
     @FXML
     private void onNext() {
         // TODO 2: treceti la pagina urmatoare (actualizati pageNumber, apoi reincarcati tabelul cu loadPage())
+        pageNumber += 1;
+        loadPage();
     }
 
     @FXML
@@ -150,5 +156,6 @@ public class MovieController {
         }
         // TODO 3: afisati "Page x / y" in pageLabel (pageNumber incepe de la 1, ca in PageRequest),
         //  dezactivati previousButton pe prima pagina si nextButton pe ultima pagina
+        pageLabel.setText("Page " + pageNumber + "/" + totalPages);
     }
 }
