@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -53,6 +54,13 @@ public class MovieController {
         var noSelection = movieTable.getSelectionModel().selectedItemProperty().isNull();
         // TODO 5: legati (bind) disableProperty() a butoanelor updateButton si deleteButton de noSelection
         //  (butoanele sunt inactive cat timp niciun film nu este selectat)
+        deleteButton.disableProperty().bind(noSelection);
+        updateButton.disableProperty().bind(noSelection);
+        movieTable.setOnKeyPressed(x -> {
+            if(x.getCode()== KeyCode.ESCAPE) {
+                movieTable.getSelectionModel().clearSelection();
+            }
+        });
 
         sortFieldBox.getItems().setAll(MovieSortField.values());
         sortFieldBox.setValue(MovieSortField.ID);
@@ -69,6 +77,8 @@ public class MovieController {
     private void onSortChanged() {
         if (service == null) return;   // fired while initializing the combo boxes
         // TODO 4: sortarea s-a schimbat: reveniti la prima pagina si reincarcati tabelul
+        pageNumber=1;
+        loadPage();
     }
 
     @FXML
