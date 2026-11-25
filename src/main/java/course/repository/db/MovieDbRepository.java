@@ -7,7 +7,6 @@ import course.lib.Page;
 import course.lib.PageRequest;
 import course.lib.Sort;
 import course.repository.PagingRepository;
-import course.repository.Repository;
 import course.repository.RepositoryException;
 
 import java.sql.Connection;
@@ -90,7 +89,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
     @Override
     public Stream<Movie> streamOk() {
         final var movieStream = new MovieStream(this::findOnPage);
-        return Stream.generate(movieStream::getNextMovie);
+        return StreamSupport.stream(movieStream, false);
     }
 
     @Override
@@ -122,6 +121,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
     // switch fara default: un camp nou in MovieSortField nu compileaza pana nu primeste o coloana
     private static String column(MovieSortField field) {
         return switch (field) {
+            case ID -> "id";
             case TITLE -> "title";
             case DIRECTOR -> "director";
             case YEAR -> "year";
@@ -136,11 +136,11 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
     // orderBy se lipeste in textul SQL: apelantii il construiesc doar din constante, niciodata din input
     private Page<Movie> findOnPage(PageRequest pr, String orderBy) {
         List<Movie> movies = new ArrayList<>();
-        int count = 0;
+        int count;
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             count = count(connection);
             if (count == 0) {
-                return new Page<>(List.of(), 0, 0);
+                return new Page<>(List.of(), 0, pr);
             }
 
             try (PreparedStatement statement = connection.prepareStatement(
@@ -160,7 +160,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
             throw new RepositoryException("Eroare la findOnPage: " + e.getMessage(), e);
         }
 
-        return new Page<>(movies, count, pr.offset());
+        return new Page<>(movies, count, pr);
     }
 
     private int count(final Connection conn) {
@@ -356,7 +356,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
     /**
      * report (a): GROUP BY forms one group for each director, COUNT(*) counts the rows of the group
      *
-     * @return the number of movies of each director, ordered by director
+     * @return a map from each director to the number of movies of that director, ordered by director
      * @throws RepositoryException if a database access error occurs
      */
     public Map<String, Long> countByDirector() {

@@ -4,31 +4,38 @@ import course.domain.Movie;
 import course.lib.Page;
 import course.lib.PageRequest;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MovieStream {
+public class MovieStream extends Spliterators.AbstractSpliterator<Movie> {
     private final Function<PageRequest, Page<Movie>> pageFetcher;
-    private int cursor = 0;
-    private PageRequest pr = new PageRequest(1, 3);
-    private Page<Movie> currentPage = new Page<>(List.of(), 1, 0);
 
-    public MovieStream(
-            Function<PageRequest, Page<Movie>> pageFetcher
-    ) {
+    private PageRequest pr = new PageRequest(1, 3);
+    private Page<Movie> currentPage = new Page<>(List.of(), 1, pr);
+    private Iterator<Movie> it = currentPage.items().iterator();
+
+    public MovieStream(Function<PageRequest, Page<Movie>> pageFetcher) {
+        super(Long.MAX_VALUE, Spliterator.ORDERED);
         this.pageFetcher = pageFetcher;
     }
 
-    // TODO(student): Ce se intampla dupa ultimul film? Dar daca tabela movies este goala?
-    //  Rulati Main (repo.streamOk().forEach) si explicati exceptia: ce linie o arunca si de ce.
-    // TODO(student): Dimensiunea paginii (3) este fixata in cod. Primiti-o prin constructor.
-    public Movie getNextMovie() {
-        if (currentPage.items().size() == cursor) {
-            currentPage = pageFetcher.apply(pr);
-            pr = pr.next();
-            cursor = 0;
+    @Override
+    public boolean tryAdvance(Consumer<? super Movie> action) {
+        if (!currentPage.hasMore() && !it.hasNext()) {
+            return false;
         }
 
-        return currentPage.items().get(cursor++);
+        if (!it.hasNext()) {
+            currentPage = pageFetcher.apply(pr);
+            pr = pr.next();
+            it = currentPage.items().iterator();
+        }
+
+        action.accept(it.next());
+        return true;
     }
 }

@@ -7,7 +7,7 @@
 services:
   postgres:
     image: postgres:17
-    container_name: s07-cinema
+    container_name: cinema
     environment:
       POSTGRES_DB: cinema
       POSTGRES_USER: postgres
