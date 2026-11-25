@@ -19,7 +19,7 @@ public class MovieStream extends Spliterators.AbstractSpliterator<Movie> {
     private Iterator<Movie> it = currentPage.items().iterator();
 
     public MovieStream(Function<PageRequest, Page<Movie>> pageFetcher) {
-        super(Long.MAX_VALUE, Spliterator.SUBSIZED);
+        super(Long.MAX_VALUE, Spliterator.ORDERED);
         this.pageFetcher = pageFetcher;
     }
 
