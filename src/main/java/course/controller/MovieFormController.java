@@ -27,6 +27,11 @@ public class MovieFormController {
         if (movie != null) {
             // TODO 7: modul de editare: completati titleField, directorField, yearField si durationField
             //  cu datele filmului (indiciu: String.valueOf pentru numere)
+            titleField.setText(movie.getTitle());
+            directorField.setText(movie.getDirector());
+            yearField.setText(String.valueOf(movie.getYear()));
+            durationField.setText(String.valueOf(movie.getDurationMinutes()));
+
         }
     }
 

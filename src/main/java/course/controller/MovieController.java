@@ -106,6 +106,8 @@ public class MovieController {
     private void onUpdate() {
         // TODO 6: luati filmul selectat din movieTable si, daca exista, deschideti formularul cu el
         //  (vezi onAdd() si openForm())
+        Movie movie = movieTable.getSelectionModel().getSelectedItem();
+        openForm(movie,"editmovie");
     }
 
     @FXML
@@ -140,8 +142,10 @@ public class MovieController {
             dialog.setTitle(title);
             dialog.setResizable(false);
             dialog.showAndWait();
-            if (controller.isSaved())
+            if (controller.isSaved()) {
                 loadPage();
+                movieTable.refresh();
+            }
         } catch (IOException e) {
             Alerts.error(movieTable, "Error", "Cannot open the form: " + e.getMessage());
         }
@@ -167,5 +171,8 @@ public class MovieController {
         // TODO 3: afisati "Page x / y" in pageLabel (pageNumber incepe de la 1, ca in PageRequest),
         //  dezactivati previousButton pe prima pagina si nextButton pe ultima pagina
         pageLabel.setText("Page " + pageNumber + "/" + totalPages);
+
+        previousButton.setDisable(pageNumber == 1);
+        nextButton.setDisable(pageNumber == totalPages);
     }
 }
