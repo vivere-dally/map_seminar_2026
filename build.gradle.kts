@@ -1,6 +1,8 @@
 plugins {
     id("java")
     id("application")
+    // seminar 9: interfata grafica JavaFX
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 group = "course"
@@ -8,6 +10,11 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+javafx {
+    version = "21.0.5"
+    modules = listOf("javafx.controls", "javafx.fxml")
 }
 
 dependencies {
@@ -20,7 +27,7 @@ dependencies {
 }
 
 application {
-    mainClass = "course.Main"
+    mainClass = "course.MovieAppLauncher"
 }
 
 tasks.test {

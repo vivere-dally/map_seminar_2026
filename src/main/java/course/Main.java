@@ -77,7 +77,7 @@ public class Main {
         System.out.println("=== Paginare sortata ===");
         Scanner scanner = new Scanner(System.in);
         MovieSortField field = readUntilValid(scanner,
-                "Sortare dupa (title / director / year / duration): ", MovieSortField::parse);
+                "Sortare dupa (id / title / director / year / duration): ", MovieSortField::parse);
         SortDirection direction = readUntilValid(scanner, "Directie (asc / desc): ", SortDirection::parse);
         Sort<MovieSortField> sort = new Sort<>(field, direction);
 

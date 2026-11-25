@@ -10,6 +10,7 @@ class MovieSortFieldTest {
 
     @Test
     void parsesEachAllowedName() {
+        assertEquals(MovieSortField.ID, MovieSortField.parse("id"));
         assertEquals(MovieSortField.TITLE, MovieSortField.parse("title"));
         assertEquals(MovieSortField.DIRECTOR, MovieSortField.parse("director"));
         assertEquals(MovieSortField.YEAR, MovieSortField.parse("year"));
@@ -25,7 +26,7 @@ class MovieSortFieldTest {
     void rejectsSqlInjectionAndListsTheAllowedFields() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> MovieSortField.parse("year; DROP TABLE movies"));
-        assertTrue(e.getMessage().contains("permise: title, director, year, duration"), e.getMessage());
+        assertTrue(e.getMessage().contains("permise: id, title, director, year, duration"), e.getMessage());
     }
 
     @Test

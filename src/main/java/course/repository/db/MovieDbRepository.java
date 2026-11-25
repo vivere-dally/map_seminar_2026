@@ -122,6 +122,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
     // switch fara default: un camp nou in MovieSortField nu compileaza pana nu primeste o coloana
     private static String column(MovieSortField field) {
         return switch (field) {
+            case ID -> "id";
             case TITLE -> "title";
             case DIRECTOR -> "director";
             case YEAR -> "year";

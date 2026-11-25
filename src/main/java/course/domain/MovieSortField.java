@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 
 /**
  * The fields by which movies can be sorted. The name typed by the user is the
- * lowercase name of the constant: title, director, year, duration.
+ * lowercase name of the constant: id, title, director, year, duration.
  * The database column of each field is known only by the database repository.
  */
 public enum MovieSortField {
-    TITLE, DIRECTOR, YEAR, DURATION;
+    ID, TITLE, DIRECTOR, YEAR, DURATION;
 
     /**
      *
