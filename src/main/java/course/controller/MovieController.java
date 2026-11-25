@@ -8,6 +8,7 @@ import course.lib.Sort;
 import course.lib.SortDirection;
 import course.service.MovieService;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -22,6 +23,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.List;
 
 public class MovieController {
     private static final int PAGE_SIZE = 3;
@@ -41,8 +44,9 @@ public class MovieController {
     @FXML private ComboBox<SortDirection> sortDirectionBox;
 
     private MovieService service;
-    private int pageNumber = 1;   // ca PageRequest: prima pagina este 1
-    private int totalPages = 1;
+
+    private PageRequest pageRequest = new PageRequest(1, PAGE_SIZE);
+    private Page page = new Page(List.of(), 1, pageRequest);
 
     @FXML
     private void initialize() {
@@ -77,23 +81,21 @@ public class MovieController {
     private void onSortChanged() {
         if (service == null) return;   // fired while initializing the combo boxes
         // TODO 4: sortarea s-a schimbat: reveniti la prima pagina si reincarcati tabelul
-        pageNumber=1;
+        pageRequest = new PageRequest(1, PAGE_SIZE);
         loadPage();
     }
 
     @FXML
     private void onPrevious() {
         // TODO 1: treceti la pagina anterioara (actualizati pageNumber, apoi reincarcati tabelul cu loadPage())
-        if(pageNumber != 1) {
-            pageNumber -= 1;
-            loadPage();
-        }
-        }
+        pageRequest = pageRequest.prev();
+        loadPage();
+    }
 
     @FXML
     private void onNext() {
         // TODO 2: treceti la pagina urmatoare (actualizati pageNumber, apoi reincarcati tabelul cu loadPage())
-        pageNumber += 1;
+        pageRequest = pageRequest.next();
         loadPage();
     }
 
@@ -152,16 +154,14 @@ public class MovieController {
     }
 
     private Page<Movie> fetchPage() {
-        return service.findOnPage(new PageRequest(pageNumber, PAGE_SIZE),
-                new Sort<>(sortFieldBox.getValue(), sortDirectionBox.getValue()));
+        return service.findOnPage(pageRequest, new Sort<>(sortFieldBox.getValue(), sortDirectionBox.getValue()));
     }
 
     private void loadPage() {
         try {
-            Page<Movie> page = fetchPage();
-            totalPages = Math.max(1, (page.totalSize() + PAGE_SIZE - 1) / PAGE_SIZE);
-            if (pageNumber > totalPages) {   // e.g. the last movie of the last page was deleted
-                pageNumber = totalPages;
+            page = fetchPage();
+            if (page.number() > page.totalPages()) {   // e.g. the last movie of the last page was deleted
+                pageRequest = new PageRequest(page.totalPages(), PAGE_SIZE);
                 page = fetchPage();
             }
             movieTable.setItems(FXCollections.observableArrayList(page.items()));
@@ -170,9 +170,9 @@ public class MovieController {
         }
         // TODO 3: afisati "Page x / y" in pageLabel (pageNumber incepe de la 1, ca in PageRequest),
         //  dezactivati previousButton pe prima pagina si nextButton pe ultima pagina
-        pageLabel.setText("Page " + pageNumber + "/" + totalPages);
+        pageLabel.setText("Page " + page.number() + "/" + page.totalPages());
 
-        previousButton.setDisable(pageNumber == 1);
-        nextButton.setDisable(pageNumber == totalPages);
+        previousButton.setDisable(page.isFirst());
+        nextButton.setDisable(page.isLast());
     }
 }

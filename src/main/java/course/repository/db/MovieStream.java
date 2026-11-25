@@ -11,7 +11,7 @@ public class MovieStream {
     private final Function<PageRequest, Page<Movie>> pageFetcher;
     private int cursor = 0;
     private PageRequest pr = new PageRequest(1, 3);
-    private Page<Movie> currentPage = new Page<>(List.of(), 1, 0);
+    private Page<Movie> currentPage = new Page<>(List.of(), 1, pr);
 
     public MovieStream(
             Function<PageRequest, Page<Movie>> pageFetcher

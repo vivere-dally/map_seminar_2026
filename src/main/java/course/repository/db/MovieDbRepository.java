@@ -141,7 +141,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             count = count(connection);
             if (count == 0) {
-                return new Page<>(List.of(), 0, 0);
+                return new Page<>(List.of(), 0, pr);
             }
 
             try (PreparedStatement statement = connection.prepareStatement(
@@ -161,7 +161,7 @@ public class MovieDbRepository implements PagingRepository<Long, Movie, MovieSor
             throw new RepositoryException("Eroare la findOnPage: " + e.getMessage(), e);
         }
 
-        return new Page<>(movies, count, pr.offset());
+        return new Page<>(movies, count, pr);
     }
 
     private int count(final Connection conn) {
